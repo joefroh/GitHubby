@@ -10,6 +10,9 @@ namespace GitHubby
     {
         static void Main(string[] args)
         {
+            var fetch = new WebFetcher();
+            fetch.Fetch();
+            Console.ReadKey();
         }
     }
 }
