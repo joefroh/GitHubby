@@ -10,8 +10,10 @@ namespace GitHubby
     {
         static void Main(string[] args)
         {
+            var userID = IOUtilities.PromptUserForInput("Which user would you like to search?");
+
             var fetch = new WebFetcher();
-            fetch.Fetch();
+            fetch.FetchRepos(userID);
             Console.ReadKey();
         }
     }
