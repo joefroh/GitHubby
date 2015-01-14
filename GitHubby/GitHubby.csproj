@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions.cs" />
+    <Compile Include="CommandLineParser.cs" />
     <Compile Include="IOUtilities.cs" />
     <Compile Include="Models\Repo.cs" />
     <Compile Include="Models\User.cs" />

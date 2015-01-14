@@ -29,5 +29,11 @@ namespace GitHubby
 
             return result;
         }
+
+        public static void PrintHelp()
+        {
+            //TODO: Help Text!
+            Console.WriteLine("This should be help text");
+        }
     }
 }
