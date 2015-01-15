@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using GitHubby.Models;
@@ -10,7 +11,7 @@ namespace GitHubby
     {
         private const string BaseUrl = "https://api.github.com";
 
-        public void FetchRepos(string user)
+        public Repo[] FetchRepos(string user)
         {
             var client = new HttpClient { BaseAddress = new Uri(BaseUrl) };
 
@@ -21,12 +22,26 @@ namespace GitHubby
             var repoJson = response.Content.ReadAsStringAsync().Result;
             var repos = JsonConvert.DeserializeObject<Repo[]>(repoJson);
 
-            foreach (var repo in repos)
-            {
-                Console.WriteLine(repo.name);
-            }
-         }
+            return repos;
+        }
 
+        public Repo FetchRepoDetails(string user, string repoName)
+        {
+           var repos = FetchRepos(user);
+
+            var repoTemp = from repo in repos
+                where repo.name == repoName
+                select repo;
+
+            var enumerable = repoTemp as Repo[] ?? repoTemp.ToArray();
+           
+            if (enumerable.Any())
+            {
+                return enumerable.First();
+            }
+
+            return null;
+        }
 
     }
 }
