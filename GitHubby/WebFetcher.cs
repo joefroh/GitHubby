@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,34 +8,50 @@ using Newtonsoft.Json;
 
 namespace GitHubby
 {
+    /// <summary>
+    ///     Class that makes the API calls and provides deserialized classes from the responses.
+    /// </summary>
     public class WebFetcher
     {
+        //The base URL of the GitHub api
         private const string BaseUrl = "https://api.github.com";
 
+        /// <summary>
+        ///     Using a web API call, fetches all of the repositories for a given user.
+        /// </summary>
+        /// <param name="user">The user whose repositories we are after.</param>
+        /// <returns>The repositories the user owns.</returns>
         public Repo[] FetchRepos(string user)
         {
-            var client = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+            using (var client = new HttpClient {BaseAddress = new Uri(BaseUrl)})
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "TestApp");
 
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "TestApp");
+                HttpResponseMessage response = client.GetAsync(String.Format("users/{0}/repos", user)).Result;
+                string repoJson = response.Content.ReadAsStringAsync().Result;
+                var repos = JsonConvert.DeserializeObject<Repo[]>(repoJson);
 
-            HttpResponseMessage response = client.GetAsync(String.Format("users/{0}/repos", user)).Result;
-            var repoJson = response.Content.ReadAsStringAsync().Result;
-            var repos = JsonConvert.DeserializeObject<Repo[]>(repoJson);
-
-            return repos;
+                return repos;
+            }
         }
 
-        public Repo FetchRepoDetails(string user, string repoName)
+        /// <summary>
+        ///     Using a web API call, fetches the given repository.
+        /// </summary>
+        /// <param name="user">The user who owns the repo.</param>
+        /// <param name="repoName">The name of the repo.</param>
+        /// <returns>The repository.</returns>
+        public Repo FetchRepoGitLink(string user, string repoName)
         {
-           var repos = FetchRepos(user);
+            Repo[] repos = FetchRepos(user);
 
-            var repoTemp = from repo in repos
+            IEnumerable<Repo> repoTemp = from repo in repos
                 where repo.name == repoName
                 select repo;
 
-            var enumerable = repoTemp as Repo[] ?? repoTemp.ToArray();
-           
+            Repo[] enumerable = repoTemp as Repo[] ?? repoTemp.ToArray();
+
             if (enumerable.Any())
             {
                 return enumerable.First();
@@ -42,6 +59,5 @@ namespace GitHubby
 
             return null;
         }
-
     }
 }
