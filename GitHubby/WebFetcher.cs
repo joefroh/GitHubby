@@ -29,10 +29,15 @@ namespace GitHubby
                 client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "TestApp");
 
                 HttpResponseMessage response = client.GetAsync(String.Format("users/{0}/repos", user)).Result;
-                string repoJson = response.Content.ReadAsStringAsync().Result;
-                var repos = JsonConvert.DeserializeObject<Repo[]>(repoJson);
 
-                return repos;
+                if (response.IsSuccessStatusCode)
+                {
+                    string repoJson = response.Content.ReadAsStringAsync().Result;
+                    var repos = JsonConvert.DeserializeObject<Repo[]>(repoJson);
+
+                    return repos;
+                }
+                return new Repo[] {};
             }
         }
 

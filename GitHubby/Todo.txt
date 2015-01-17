@@ -1,2 +1,1 @@
-﻿- Fix bug where if a user isn't found for a user repo search, the program crashes on deserialization.
-- Add nice error handling for an unrecognized command.
+﻿- Add nice error handling for an unrecognized command.
