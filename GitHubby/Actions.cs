@@ -45,8 +45,8 @@ namespace GitHubby
                     }
                     break;
                 default:
-                    //TODO: Alert the user to an unrecognized command.
                     Console.WriteLine("Unrecognized Command {0}", command.Key);
+                    IOUtilities.PrintHelp();
                     break;
             }
         }
